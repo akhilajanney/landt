@@ -25,12 +25,13 @@
   .maindiv{
     float: right;
     width: 84%;
+    overflow-x: auto;
     height: 100vh;
     margin-top: 0px;
     margin-bottom: 30px;
     margin-right:0px;
     background-color: #EAF1F7;
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
   }
 
   .actions{
@@ -117,18 +118,7 @@ select{
     table tr:last-child { 
       border-bottom: none; 
   }
-  .navbtn{
-    width:220px;
-    height:40px;
-    border: none;
-    border-radius:4px;
-    font-size: 16px;
-    cursor: pointer;
-    color: Black;
-    font-weight: bold;
-    box-shadow: 3px 3px 5px 3px rgba(0, 0, 0, 0.25);
-    margin-left: 50px;
-  }
+
   .remove{
     display:flex;
     background:white;
@@ -161,4 +151,60 @@ select{
        margin-left:262px;
        margin-top:22px;
    }
+   .container{
+    border-radius: 0px 0px 5px 5px;
+    border-top: none;
+    box-shadow: 0px 0px 5px 1px #00629B;
+    width:969px;
+   
+}
+.navbtn{
+  width:323px;
+  height:40px;
+  border: none;
+  border-radius:4px;
+  font-size: 16px;
+  cursor: pointer;
+  color: Black;
+  font-weight: bold;
+  box-shadow: 3px 3px 5px 3px rgba(0, 0, 0, 0.25);
+  /* margin-left: 50px; */
+}
+
+.circle{
+  width: 0px;
+   padding: 5px;
+  border-radius: 10px;
+}
+
+.modal {
+  display: none;
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /*enablescroll if needed */
+  background-color: rgb(128, 128, 128, 0.5); /*Background color*/
+}
+.modal-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  width: 25%;
+  background-color: white;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0px 0px 5px 4px lightgray;
+  padding: 20px;
+  overflow: auto;
+}
+.btn-center {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+}
   

@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { sidelinkClicked } from '../leftsidebar/Leftsidebar';
+import $ from 'jquery'
 
 export default class Realtime extends Component {
   constructor(){
@@ -8,6 +10,9 @@ export default class Realtime extends Component {
       success:false,
       error:false,
     }
+  }
+  componentDidMount(){
+    sidelinkClicked('option2')
   }
   render() {
     const{message,error,success}=this.state;
@@ -25,6 +30,18 @@ export default class Realtime extends Component {
 
                 
                 </div>
+                <div id="config_displayModal" className="modal">
+          <div className="modal-content">
+            <p id="content" style={{ textAlign: "center" }}></p>
+            <button
+              id="ok"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       </div>
       
       </>

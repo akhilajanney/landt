@@ -1,6 +1,8 @@
+import axios from 'axios';
 import React, { Component } from 'react'
 import Chart from 'react-apexcharts'
 import { Link } from 'react-router-dom';
+import $ from 'jquery'
 
 export default class Home extends Component {
     constructor(props) {
@@ -34,7 +36,11 @@ export default class Home extends Component {
                     }
                   }
                 }
-              }  
+              }  ,
+              xaxis: {
+                offsetX: 10,
+                offsetY: 10,
+              }
           },
           options2: {
             series: [50,50],
@@ -99,6 +105,31 @@ export default class Home extends Component {
          
         }
     }
+
+    componentDidMount(){
+      axios({method:'GET',url:'/api/asset/count'})
+      .then((response)=>{
+       console.log(response);
+        let resdata=response.data;
+        let a=response.data.asset.active;
+        console.log(a);
+        // for(let i=0;i<resdata.length;i++){
+        //   console.log(resdata);
+        //   this.asset_tot=resdata[i].asset.total
+        //   console.log( this.asset_tot)
+        // }
+
+        
+      })
+      .catch((error)=>{
+        console.log(error);
+      })
+    }
+    sessionTimeout = () => {
+      $("#config_displayModal").css("display", "none");
+      sessionStorage.removeItem('login')
+      window.location.pathname='/login'
+    };
   render() {
     return (
         <>
@@ -160,6 +191,18 @@ export default class Home extends Component {
                   </h3>
                   </div>
           </div>
+          <div id="config_displayModal" className="modal">
+          <div className="modal-content">
+            <p id="content" style={{ textAlign: "center" }}></p>
+            <button
+              id="ok"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       
       </div>
       </>

@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import $ from 'jquery'
+import axios from 'axios';
 
 export default class Assetreg extends Component {
-     // register = () => {
+     
         constructor(){
             super();
             this.state={
@@ -11,67 +12,83 @@ export default class Assetreg extends Component {
               error:false,
             }
           }
-    //     let data = {
-    //         macid: $('#sensorid').val(),
-    //         systemid: $('#systemname').val(),
-    //         min: $('#min').val(),
-    //         max: $('#max').val()
-    //     }
-    //     if (!$("#sensorid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
-    //         this.setState({error: true, message: 'Invalid Sensor ID'})
-    //     } else if (data.macid !== "" && data.systemid !== "" && data.min !== "" && data.max !== '') {
-    //         axios({method: 'POST', url: '/api/sensor/temperature', data: data}).then((response) => { // console.log(response);
-    //             if (response.status === 200 || response.status === 201) {
-    //                 this.setState({success: true, message: 'Sensor registered successfullyy'})
-    //                 $('#sensorid').val('');
-    //             } else if (response.status === 406) {
-    //                 this.setState({success: true, message1: response.data.message})
-    //             }
-    //         }).catch((error) => { // console.log(error);
-    //             if (error.response.status === 403) {
-    //                 this.setState({error: true, message: 'Please Login Again'})
-    //             } else if (error.response.status === 400) {
-    //                 this.setState({error: true, message: 'Bad Request!'})
-    //             }
+          register = () => {
+        let data = {
+            name: $('#assetname').val(),
+            tagid: $('#assetid').val(),
+           
+        }
+        if (!$("#assetid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+            this.setState({error: true, message: 'Invalid Asset ID'})
+        } else if (data.name !== "" && data.tagid !== "" ) {
+            axios({method: 'POST', url: '/api/asset/registration', data: data})
+            .then((response) => {
+                 console.log(response);
+                if (response.status === 200 || response.status === 201) {
+                    this.setState({success: true, message: 'Asset registered successfullyy'})
+                    $('#assetid').val('');
+                     $('#assetname').val('');
+                } else if (response.status === 406) {
+                    this.setState({success: true, message1: response.data.message})
+                }
+            }).catch((error) => { 
+                console.log(error);
+                if (error.response.status === 403) {
+                    this.setState({error: true, message: 'Please Login Again'})
+                } else if (error.response.status === 400) {
+                    this.setState({error: true, message: 'Bad Request!'})
+                }
 
-    //         })
-    //     } else {
-    //         this.setState({error: true, message: 'Please Enter All Fields'})
-    //     }
+            })
+        } else {
+            this.setState({error: true, message: 'Please Enter All Fields'})
+        }
+    }
 
-    //     remove = () => {
-    //         let data = {
-    //             macid: $('#id').val()
-    //         }
+        remove = () => {
+            let data = {
+                tagid: $('#id').val()
+            }
     
-    //         if (data.macid.match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
-    //             this.setState({error: true, message: 'Invalid Sensor ID'})
-    //         } else if (data.macid !== '') {
+            if (!$("#id").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+                this.setState({error: true, message: 'Invalid Tag ID'})
+            } 
+            else if ( $('#id').val() !== '') {
     
-    //             axios({method: 'DELETE', url: '/api/sensor/temperature', data: data}).then((response) => {
-    //                 if (response.status === 200 || response.status === 201) {
-    //                     this.setState({success: true, message: 'Sensor Removed Successfullyy'})
-    //                     $('#id').val('');
-    //                     $('#deletetag').hide();
-    //                 }
-    //             }).catch((error) => { // console.log(error);
-    //                 if (error.response.status === 406) {
-    //                     this.setState({error: true, message: 'Capacity Exceeded!'})
-    //                 }
+                axios({method: 'DELETE', url: '/api/asset/registration', data: data}).then((response) => {
+                    if (response.status === 200 || response.status === 201) {
+                        this.setState({success: true, message: 'Asset Tag Removed Successfullyy'})
+                        $('#id').val('');
+                        $('#deletetag').hide();
+                    }
+                }).catch((error) => { // console.log(error);
+                    if (error.response.status === 403) {
+                        $("#asset_displayModal").css("display", "block");
+                        $("#content").text("User Session has timed out. Please Login again");
+                      }
     
-    //             })
-    //         } else {
-    //             this.setState({error: true, message: 'Enter Sensor ID'})
-    //         }
-    //     }
-    // }
+                })
+            } 
+            else {
+                this.setState({error: true, message: 'Enter Asset ID'})
+            }
+    }
     hide = () => {
         document.getElementById("deletetag").style.display = $("#deletetag").css("display") === 'block' ? 'none' : 'block'
     }
+    componentDidUpdate() {
+        setTimeout(() => this.setState({message: '', message1: ''}), 3000);
+    }
+    sessionTimeout = () => {
+        $("#config_displayModal").css("display", "none");
+        sessionStorage.removeItem('login')
+        window.location.pathname='/login'
+      };
   render() {
     const{message,error,success}=this.state;
     return (
-      <div>
+      <div >
+          <div style={{textAlign:'center',paddingTop:'10px'}}>
            {error && (
             <div style={{ color: 'red' }}>
               <strong>{message}</strong>
@@ -83,6 +100,13 @@ export default class Assetreg extends Component {
               <strong>{message}</strong>
             </div>
           )}
+          </div>
+           <div style={{marginLeft:'30px',paddingTop:'15px'}}>
+          <h3 style={{color:'#0000008f'}}>Asset Registration</h3>
+                <div style={{width:'50px',height:'5px',background:'#00629B',
+                marginTop:'-12px',borderRadius:'5px',marginBottom:'15px'}}>
+
+                </div>
            <div className="inputdiv">
                             <span className="label">Asset Name :</span>
                             <input type="text" name="assetname" id="assetname" required="required" />
@@ -90,18 +114,18 @@ export default class Assetreg extends Component {
 
                         <div className="inputdiv">
                             <span className="label">Mac ID :</span>
-                            <input type="text" name="assetid" id="assetid" required="required" placeholder='5a-c2-15-03-00-00'/>
+                            <input type="text" name="assetid" id="assetid" required="required" placeholder='5a-c2-15-01-00-00'/>
                         </div>
 
-                        <div className="inputdiv">
+                        {/* <div className="inputdiv">
                             <span className="label">Shop Floor :</span>
                             <input type="text" name="flooor" id="floor" required="required"/>
-                        </div>
+                        </div> */}
                         <form id="empreg">
                         <div style={
                             {
                                 display: 'flex',
-                                marginTop: '55px',
+                                marginTop: '35px',
                                 marginLeft: '12px',
                                 paddingBottom: '20px'
                             }
@@ -111,7 +135,7 @@ export default class Assetreg extends Component {
                             <div className='remove'>
                                 <div style={
                                         {
-                                            marginLeft: '30px',
+                                            marginLeft: '35px',
                                             marginTop: '5px',
                                             color: '#00629B',
                                             cursor: 'pointer',
@@ -173,7 +197,7 @@ export default class Assetreg extends Component {
                             }
                     }>
                         <div className="inputdiv">
-                            <span className="label">Asset ID :</span>
+                            <span className="label">Mac ID :</span>
                             <input type="text" name="id" id="id" required="required" />
                         </div>
                         <div className='delete'>
@@ -203,6 +227,19 @@ export default class Assetreg extends Component {
                             </div>
                         </div>
                     </form>
+                </div>
+                <div id="config_displayModal" className="modal">
+          <div className="modal-content">
+            <p id="content" style={{ textAlign: "center" }}></p>
+            <button
+              id="ok"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       </div>
     )
   }

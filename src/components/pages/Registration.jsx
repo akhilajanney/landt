@@ -3,6 +3,7 @@ import $ from 'jquery'
 import Employeereg from './Employeereg';
 import Assetreg from './Assetreg';
 import Utilizereg from './Utilizereg';
+import { sidelinkClicked } from '../leftsidebar/Leftsidebar';
 
 export default class Registration extends Component {
   List = [false, false,false];
@@ -13,10 +14,10 @@ export default class Registration extends Component {
     }
   }
     componentDidMount(){
-        // sidelinkClicked('option1')
+        sidelinkClicked('option1')
         this.setState({ flag: true })
         this.List[0] = true;
-        $("#opt0").css({"background": "#00629B", "color": "white" });
+        $("#opt0").css({"background": "#00629bed", "color": "white" });
       }
 
       optionChange = (e) => {
@@ -26,9 +27,14 @@ export default class Registration extends Component {
         this.setState({ flag: true })
         this.List = [false, false,false]
         let id = parseInt(e.target.id.substring(3))
-        $("#" + e.target.id).css({ "background": "#00629B", "color": "white" });
+        $("#" + e.target.id).css({ "background": "#00629bed", "color": "white" });
         this.List[id] = true;
       }
+      sessionTimeout = () => {
+        $("#config_displayModal").css("display", "none");
+        sessionStorage.removeItem('login')
+        window.location.pathname='/login'
+      };
   render() {
     return (
         <>
@@ -41,7 +47,7 @@ export default class Registration extends Component {
                 </div>
                 <div className="container fading"
               style={{
-                marginTop: "30px",marginLeft:'35px'
+                marginTop: "30px"
                
               }}>
               <div className="row"
@@ -66,7 +72,6 @@ export default class Registration extends Component {
                 </button>
               </div>
               <div
-              style={{marginLeft:'52px',marginTop:'85px'}}
                 className="container"
                 id="childComponent"
               >
@@ -77,6 +82,18 @@ export default class Registration extends Component {
               </div>
             </div>
                 </div>
+                <div id="config_displayModal" className="modal">
+          <div className="modal-content">
+            <p id="content" style={{ textAlign: "center" }}></p>
+            <button
+              id="ok"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       </div>
       
       </>

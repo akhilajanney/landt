@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import $ from 'jquery'
+import axios from 'axios';
 
 export default class Utilizereg extends Component {
     constructor(){
@@ -8,70 +9,90 @@ export default class Utilizereg extends Component {
           message:'',
           success:false,
           error:false,
+          message1:''
         }
       }
-     // register = () => {
-    //     let data = {
-    //         macid: $('#sensorid').val(),
-    //         systemid: $('#systemname').val(),
-    //         min: $('#min').val(),
-    //         max: $('#max').val()
-    //     }
-    //     if (!$("#sensorid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
-    //         this.setState({error: true, message: 'Invalid Sensor ID'})
-    //     } else if (data.macid !== "" && data.systemid !== "" && data.min !== "" && data.max !== '') {
-    //         axios({method: 'POST', url: '/api/sensor/temperature', data: data}).then((response) => { // console.log(response);
-    //             if (response.status === 200 || response.status === 201) {
-    //                 this.setState({success: true, message: 'Sensor registered successfullyy'})
-    //                 $('#sensorid').val('');
-    //             } else if (response.status === 406) {
-    //                 this.setState({success: true, message1: response.data.message})
-    //             }
-    //         }).catch((error) => { // console.log(error);
-    //             if (error.response.status === 403) {
-    //                 this.setState({error: true, message: 'Please Login Again'})
-    //             } else if (error.response.status === 400) {
-    //                 this.setState({error: true, message: 'Bad Request!'})
-    //             }
+     register = () => {
+        let data = {
+            name: $('#sysname').val(),
+            tagid: $('#tagid').val(),
+           
+        }
+        if (!$("#tagid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+            this.setState({error: true, message: 'Invalid Tag ID'})
+        } else if (data.name !== "" && data.tagid !== "" ) {
+            axios({method: 'POST', url: '/api/utilization/registration', data: data})
+            .then((response) => { 
+                console.log(response);
+                if (response.status === 200 || response.status === 201) {
+                    this.setState({success: true, message: 'Tag registered successfullyy'})
+                    $('#sysname').val('');
+                    $('#tagid').val('');
+                } else if (response.status === 406) {
+                    this.setState({success: true, message1: response.data.message})
+                }
+            }).catch((error) => { 
+                if (error.response.status === 403) {
+                    $("#config_displayModal").css("display", "block");
+                    $("#content").text("User Session has timed out. Please Login again");
+                  } else if (error.response.status === 400) {
+                    this.setState({error: true, message: 'Bad Request!'})
+                }
 
-    //         })
-    //     } else {
-    //         this.setState({error: true, message: 'Please Enter All Fields'})
-    //     }
+            })
+        } else {
+            this.setState({error: true, message: 'Please Enter All Fields'})
+        }
+    }
 
-    //     remove = () => {
-    //         let data = {
-    //             macid: $('#id').val()
-    //         }
+        remove = () => {
+            let data = {
+                tagid: $('#id').val(),
+            }
+            console.log(data.tagid);
     
-    //         if (data.macid.match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
-    //             this.setState({error: true, message: 'Invalid Sensor ID'})
-    //         } else if (data.macid !== '') {
+            if (!$("#id").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+                this.setState({error: true, message: 'Invalid Tag ID'})
+            } 
+            else if ($("#id").val() !== '') {
     
-    //             axios({method: 'DELETE', url: '/api/sensor/temperature', data: data}).then((response) => {
-    //                 if (response.status === 200 || response.status === 201) {
-    //                     this.setState({success: true, message: 'Sensor Removed Successfullyy'})
-    //                     $('#id').val('');
-    //                     $('#deletetag').hide();
-    //                 }
-    //             }).catch((error) => { // console.log(error);
-    //                 if (error.response.status === 406) {
-    //                     this.setState({error: true, message: 'Capacity Exceeded!'})
-    //                 }
+                axios({method: 'DELETE', url: '/api/utilization/registration', data: data}).then((response) => {
+                    if (response.status === 200 || response.status === 201) {
+                        this.setState({success: true, message: 'Tag Removed Successfullyy'})
+                        $('#id').val('');
+                        $('#deletetag').hide();
+                       
+                    }
+                }).catch((error) => { // console.log(error);
+                    if (error.response.status === 403) {
+                        $("#asset_displayModal").css("display", "block");
+                        $("#content").text("User Session has timed out. Please Login again");
+                      }
     
-    //             })
-    //         } else {
-    //             this.setState({error: true, message: 'Enter Sensor ID'})
-    //         }
-    //     }
+                })
+            }
+             else {
+                this.setState({error: true, message: 'Enter Tag ID'})
+            }
+        }
     // }
     hide = () => {
         document.getElementById("deletetag").style.display = $("#deletetag").css("display") === 'block' ? 'none' : 'block'
     }
+    sessionTimeout = () => {
+        $("#config_displayModal").css("display", "none");
+        sessionStorage.removeItem('login')
+        window.location.pathname='/login'
+      };
+      componentDidUpdate() {
+        setTimeout(() => this.setState({message: '', message1: ''}), 3000);
+    }
   render() {
-    const{message,error,success}=this.state;
+    const{message,error,success,message1}=this.state;
     return (
-      <div>
+      <div >
+          <div style={{textAlign:'center',paddingTop:'10px'
+      }}>
            {error && (
             <div style={{ color: 'red' }}>
               <strong>{message}</strong>
@@ -83,30 +104,33 @@ export default class Utilizereg extends Component {
               <strong>{message}</strong>
             </div>
           )}
+            {success && (
+            <div style={{ color: 'red', }}>
+              <strong>{message1}</strong>
+            </div>
+          )}
+          </div>
+           <div style={{marginLeft:'30px',paddingTop:'15px'}}>
+          <h3 style={{color:'#0000008f'}}>Utilization Registration</h3>
+                <div style={{width:'50px',height:'5px',background:'#00629B',
+                marginTop:'-12px',borderRadius:'5px',marginBottom:'15px'}}>
+
+                </div>
           <div className="inputdiv">
                             <span className="label">System Name :</span>
                             <input type="text" name="sysname" id="sysname" required="required" />
                         </div>
 
                         <div className="inputdiv">
-                            <span className="label">System ID :</span>
-                            <input type="text" name="sysid" id="sysid" required="required"/>
+                            <span className="label">Tag ID :</span>
+                            <input type="text" name="tagid" id="tagid" required="required"/>
                         </div>
-
-                        <div className="inputdiv">
-                            <span className="label">Sensor Name :</span>
-                            <input type="text" name="sensorname" id="sensorname" required="required"/>
-                        </div>
-                        <div className="inputdiv">
-                            <span className="label">Sensor ID :</span>
-                            <input type="text" name="sensorid" id="sensorid" required="required"/>
-                        </div>
-                        <form id="empreg">
+                        <form id="utilizereg">
                         <div style={
                             {
                                 display: 'flex',
-                                marginTop: '55px',
-                                marginLeft: '12px',
+                                marginTop: '35px',
+                                marginLeft: '35px',
                                 paddingBottom: '20px'
                             }
                         }>
@@ -177,7 +201,7 @@ export default class Utilizereg extends Component {
                             }
                     }>
                         <div className="inputdiv">
-                            <span className="label">Employee ID :</span>
+                            <span className="label">Sensor ID :</span>
                             <input type="text" name="id" id="id" required="required" />
                         </div>
                         <div className='delete'>
@@ -207,6 +231,19 @@ export default class Utilizereg extends Component {
                             </div>
                         </div>
                     </form>
+                    </div>
+                    <div id="config_displayModal" className="modal">
+          <div className="modal-content">
+            <p id="content" style={{ textAlign: "center" }}></p>
+            <button
+              id="ok"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       </div>
     )
   }

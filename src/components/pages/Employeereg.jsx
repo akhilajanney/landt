@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import $ from 'jquery'
+import axios from 'axios';
 
 export default class Employeereg extends Component {
     constructor(){
@@ -8,70 +9,89 @@ export default class Employeereg extends Component {
           message:'',
           success:false,
           error:false,
+          message1:''
         }
       }
-    // register = () => {
-    //     let data = {
-    //         macid: $('#sensorid').val(),
-    //         systemid: $('#systemname').val(),
-    //         min: $('#min').val(),
-    //         max: $('#max').val()
-    //     }
-    //     if (!$("#sensorid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
-    //         this.setState({error: true, message: 'Invalid Sensor ID'})
-    //     } else if (data.macid !== "" && data.systemid !== "" && data.min !== "" && data.max !== '') {
-    //         axios({method: 'POST', url: '/api/sensor/temperature', data: data}).then((response) => { // console.log(response);
-    //             if (response.status === 200 || response.status === 201) {
-    //                 this.setState({success: true, message: 'Sensor registered successfullyy'})
-    //                 $('#sensorid').val('');
-    //             } else if (response.status === 406) {
-    //                 this.setState({success: true, message1: response.data.message})
-    //             }
-    //         }).catch((error) => { // console.log(error);
-    //             if (error.response.status === 403) {
-    //                 this.setState({error: true, message: 'Please Login Again'})
-    //             } else if (error.response.status === 400) {
-    //                 this.setState({error: true, message: 'Bad Request!'})
-    //             }
+    register = () => {
+        let data = {
+            name: $('#empname').val(),
+            tagid: $('#tagid').val(),
+            empid: $('#empid').val(),
+        
+        }
+        if (!$("#tagid").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+            this.setState({error: true, message: 'Invalid Tag ID'})
+        } else if (data.name !== "" && data.tagid !== "" && data.empid !== "") {
+            axios({method: 'POST', url: '/api/employee/registration', data: data})
+            .then((response) => { 
+                console.log(response);
+                if (response.status === 200 || response.status === 201) {
+                    this.setState({success: true, message: 'Employee registered successfullyy'})
+                    $('#empname').val('');
+                    $('#tagid').val('');
+                     $('#empid').val('');
+                } else if (response.status === 406) {
+                    this.setState({success: true, message1: response.data.message})
+                }
+            }).catch((error) => { // console.log(error);
+                if (error.response.status === 403) {
+                    this.setState({error: true, message: 'Please Login Again'})
+                } else if (error.response.status === 400) {
+                    this.setState({error: true, message: 'Bad Request!'})
+                }
 
-    //         })
-    //     } else {
-    //         this.setState({error: true, message: 'Please Enter All Fields'})
-    //     }
+            })
+        } else {
+            this.setState({error: true, message: 'Please Enter All Fields'})
+        }      
+     }
+     remove = () => {
+        let data = {
+            tagid: $('#id').val()
+        }
 
-    //     remove = () => {
-    //         let data = {
-    //             macid: $('#id').val()
-    //         }
-    
-    //         if (data.macid.match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
-    //             this.setState({error: true, message: 'Invalid Sensor ID'})
-    //         } else if (data.macid !== '') {
-    
-    //             axios({method: 'DELETE', url: '/api/sensor/temperature', data: data}).then((response) => {
-    //                 if (response.status === 200 || response.status === 201) {
-    //                     this.setState({success: true, message: 'Sensor Removed Successfullyy'})
-    //                     $('#id').val('');
-    //                     $('#deletetag').hide();
-    //                 }
-    //             }).catch((error) => { // console.log(error);
-    //                 if (error.response.status === 406) {
-    //                     this.setState({error: true, message: 'Capacity Exceeded!'})
-    //                 }
-    
-    //             })
-    //         } else {
-    //             this.setState({error: true, message: 'Enter Sensor ID'})
-    //         }
-    //     }
-    // }
+        if (!$("#id").val().match("([A-Za-z0-9]{2}[-]){5}([A-Za-z0-9]){2}")) {
+            this.setState({error: true, message: 'Invalid Tag ID'})
+        } 
+        else if ( $('#id').val() !== '') {
+
+            axios({method: 'DELETE', url: '/api/employee/registration', data: data}).then((response) => {
+                if (response.status === 200 || response.status === 201) {
+                    this.setState({success: true, message: 'Employee Tag Removed Successfullyy'})
+                    $('#id').val('');
+                    $('#deletetag').hide();
+                }
+            }).catch((error) => { // console.log(error);
+                if (error.response.status === 403) {
+                    $("#config_displayModal").css("display", "block");
+                    $("#content").text("User Session has timed out. Please Login again");
+                  }
+
+            })
+        } 
+        else {
+            this.setState({error: true, message: 'Enter Tag ID'})
+        }
+}
+     
+     
+     
     hide = () => {
         document.getElementById("deletetag").style.display = $("#deletetag").css("display") === 'block' ? 'none' : 'block'
     }
+    sessionTimeout = () => {
+        $("#config_displayModal").css("display", "none");
+        sessionStorage.removeItem('login')
+        window.location.pathname='/login'
+      };
+      componentDidUpdate() {
+        setTimeout(() => this.setState({message: '', message1: ''}), 3000);
+    }
   render() {
-    const{message,error,success}=this.state;
+    const{message,error,success,message1}=this.state;
     return (
       <div>
+          <div style={{textAlign:'center',paddingTop:'10px'}}>
            {error && (
             <div style={{ color: 'red' }}>
               <strong>{message}</strong>
@@ -83,6 +103,18 @@ export default class Employeereg extends Component {
               <strong>{message}</strong>
             </div>
           )}
+           {success && (
+            <div style={{ color: 'red', }}>
+              <strong>{message1}</strong>
+            </div>
+          )}
+          </div>
+          <div style={{marginLeft:'30px',paddingTop:'15px'}}>
+          <h3 style={{color:'#0000008f'}}>Employee Registration</h3>
+                <div style={{width:'50px',height:'5px',background:'#00629B',
+                marginTop:'-12px',borderRadius:'5px',marginBottom:'15px'}}>
+
+                </div>
              <div className="inputdiv">
                             <span className="label">Employee Name :</span>
                             <input type="text" name="empname" id="empname" required="required" />
@@ -101,8 +133,8 @@ export default class Employeereg extends Component {
                         <div style={
                             {
                                 display: 'flex',
-                                marginTop: '55px',
-                                marginLeft: '12px',
+                                marginTop: '40px',
+                                marginLeft: '35px',
                                 paddingBottom: '20px'
                             }
                         }>
@@ -164,8 +196,8 @@ export default class Employeereg extends Component {
                                 </div>
                             </div>
                         </div>
-                    </form>
-                    <form id="deletetag"
+                        </form>
+                        <form id="deletetag"
                         style={
                             {
                                 paddingBottom: '30px',
@@ -173,7 +205,7 @@ export default class Employeereg extends Component {
                             }
                     }>
                         <div className="inputdiv">
-                            <span className="label">Employee ID :</span>
+                            <span className="label">Mac ID :</span>
                             <input type="text" name="id" id="id" required="required" />
                         </div>
                         <div className='delete'>
@@ -203,6 +235,19 @@ export default class Employeereg extends Component {
                             </div>
                         </div>
                     </form>
+                    </div>
+                    <div id="config_displayModal" className="modal">
+          <div className="modal-content">
+            <p id="content" style={{ textAlign: "center" }}></p>
+            <button
+              id="ok"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       </div>
     )
   }

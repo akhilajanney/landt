@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import { sidelinkClicked } from '../leftsidebar/Leftsidebar';
+import axios from 'axios';
+import $ from 'jquery'
 
 export default class Health extends Component {
   constructor(){
@@ -9,36 +12,145 @@ export default class Health extends Component {
       error:false,
     }
   }
+  componentDidMount(){
+    sidelinkClicked('option4')
+    this.systemHealth();
+  }
 
-//   systemHealth = () => {
-//     axios({method: 'GET', url: '/api/sensor/temperature'}).then((response) => {
-//         console.log(response);
-//         let data = response.data;
-//         let sno = 1;
-//         $('#health').empty();
-//         for (let i = 0; i < data.length; i++) {
-//             for (let j = 0; j < data[i].sensors.length; j++) {
-//                 let datas = data[i].sensors[j];
-//                 let timestamp = datas.lastseen.substr(0, 10) + " " + datas.lastseen.substr(11, 8),
-//                     status = 'red';
-//                 if (new Date() - new Date(datas.lastseen) <= 2 * 60 * 1000) {
-//                     status = "green";
-//                 }
-//                 $('#systemHealth').append("<tr><td>" + (
-//                   sno
-//                 ) + "</td><td>" + datas.macid + "</td><td>" + data[i].systemname + "</td><td>" + datas.battery + "</td><td>" + timestamp + "</td><td>" + "<div class='circle' style='margin:auto;background-color:" + status + ";'></div></td></tr>");
-//                 sno+=1;
+  systemHealth = () => {
+   let  type=$('#healthtype').val();
+    let sno=0;
+    if($('#healthtype').val()==='employee'){
+    axios({method:'GET',url:'/api/employee/registration?key=all'})
+    .then((response)=>{
+      console.log(response);
+      $('#health').empty(); let data=response.data;
+      for(let i=0;i<data.length;i++){
+       
+        let timestamp=data[i].lastseen .substr(0, 10) +
+        " " +
+        data[i].lastseen.substr(11, 8),
+        status='red';
+          if (new Date() - new Date(data[i].lastseen) <= 2 * 60 * 1000) {
+            status = "green";
+          }
+          $('#health').append(
+            "<tr><td>" +
+                (sno + 1) +
+                "</td><td>" +
+                data[i].tagid +
+                "</td><td>" +
+                timestamp +
+                "</td><td>" +
+              "<div class='circle' style='margin:auto;background-color:" +
+              status +
+              ";'></div></td></tr>" 
+          
+        );sno+=1;
+      }
+    })
+    .catch((error)=>{
+      if (error.response.status === 403) {
+        $("#config_displayModal").css("display", "block");
+        $("#content").text("User Session has timed out. Please Login again");
+      } else if (error.response.status === 400) {
+        this.setState({error: true, message: 'Bad Request!'})     
+    }else if (error.response.status === 404) {
+      this.setState({error: true, message: 'No data Found!'})     
+  }
+    })
+  }
+  else  if($('#healthtype').val()==='asset'){
+    axios({method:'GET',url:'/api/asset/registration?key=all'})
+    .then((response)=>{
+      $('#health').empty();
+      let data=response.data;
+      for(let i=0;i<data.length;i++){
+       
+        let timestamp=data[i].lastseen .substr(0, 10) +
+        " " +
+        data[i].lastseen.substr(11, 8),
+        status='red';
+          if (new Date() - new Date(data[i].lastseen) <= 2 * 60 * 1000) {
+            status = "green";
+          }
+          $('#health').append(
+            "<tr><td>" +
+                (sno + 1) +
+                "</td><td>" +
+                data[i].tagid +
+                "</td><td>" +
+                timestamp +
+                "</td><td>" +
+              "<div class='circle' style='margin:auto;background-color:" +
+              status +
+              ";'></div></td></tr>" 
+          
+        );sno+=1;
+      }
+    })
+    .catch((error)=>{
+      if (error.response.status === 403) {
+        $("#config_displayModal").css("display", "block");
+        $("#content").text("User Session has timed out. Please Login again");
+      }  else if (error.response.status === 400) {
+        this.setState({error: true, message: 'Bad Request!'})
+    }else if (error.response.status === 404) {
+      this.setState({error: true, message: 'No data Found!'})     
+  }
+    })
+  }
+  else  if($('#healthtype').val()==='utilize'){
+    axios({method:'GET',url:'/api/utilization/registration?key=all'})
+    .then((response)=>{
+      $('#health').empty();
+      let data=response.data;
+      for(let i=0;i<data.length;i++){
+     
+        let timestamp=data[i].lastseen .substr(0, 10) +
+        " " +
+        data[i].lastseen.substr(11, 8),
+        status='red';
+          if (new Date() - new Date(data[i].lastseen) <= 2 * 60 * 1000) {
+            status = "green";
+          }
+          $('#health').append(
+            "<tr><td>" +
+                (sno + 1) +
+                "</td><td>" +
+                data[i].tagid +
+                "</td><td>" +
+                timestamp +
+                "</td><td>" +
+              "<div class='circle' style='margin:auto;background-color:" +
+              status +
+              ";'></div></td></tr>" 
+          
+        );sno+=1;
+      }
+    })
+    .catch((error)=>{
+      if (error.response.status === 403) {
+        $("#config_displayModal").css("display", "block");
+        $("#content").text("User Session has timed out. Please Login again");
+      } else if (error.response.status === 400) {
+        this.setState({error: true, message: 'Bad Request!'})
+    }else if (error.response.status === 404) {
+      this.setState({error: true, message: 'No data Found!'})     
+  }
+    })
+  }
 
-//               }
-//         }
-//     }).catch((error) => {
-//       if(error.response.status===403){
-//         this.setState({error:true,message:'Please Login Again'})
-//       }else if(error.response.status===400){
-//         this.setState({error:true,message:'Bad Request!'})
-//       }
-//     })
-// }
+  
+}
+componentDidUpdate() {
+  setTimeout(() => this.setState({message: ''}), 3000);
+}
+sessionTimeout = () => {
+  $("#config_displayModal").css("display", "none");
+  sessionStorage.removeItem('login')
+  window.location.pathname='/login'
+};
   render() {
     const{message,error,success}=this.state;
     return (
@@ -62,35 +174,41 @@ export default class Health extends Component {
               <strong>{message}</strong>
             </div>
           )}
+           <div className="inputdiv"  onChange={this.systemHealth}>
+                            <span className="label">Health:</span>
+                            <select name="healthtype" id="healthtype" required="required">
+                                <option value='employee'>Employee</option>
+                                <option value='asset'>Asset</option>
+                                <option value='utilize'>Utilization</option>
+
+                            </select>
+                        </div>
                 
                 <table style={{ marginTop: "30px" }}>
                 <thead>
                   <tr>
                     <th>Sl.No</th>
-                    <th>ASSET MACID</th>
-                    <th>ASSET TYPE</th>
+                    <th>TAGID</th>
                     <th>LAST SEEN</th>
                     <th>STATUS</th>
-                    
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>5a-c2-15-03-00-01</td>
-                    <td>A</td>
-                    <td>22-05-2022</td>
-                    
-                  </tr>
-                  <tr>
-                    <td>1</td>
-                    <td>5a-c2-15-03-00-01</td>
-                    <td>A</td>
-                    <td>22-05-2022</td>
                     
                   </tr>
                 </thead>
                 <tbody id="health"></tbody>
               </table>
             </div>
+            <div id="config_displayModal" className="modal">
+          <div className="modal-content">
+            <p id="content" style={{ textAlign: "center" }}></p>
+            <button style={{ textAlign: "center" }}
+              id="ok"
+              className="btn-center btn success-btn"
+              onClick={this.sessionTimeout}
+            >
+              OK
+            </button>
+          </div>
+        </div>
       </div>
      
       </>

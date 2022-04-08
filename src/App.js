@@ -29,17 +29,17 @@ export default class App extends Component {
   }
   render(){
     const { status } = this.state;
-//     if (status === "failed" || status===null){
-//       return (
-//         <Router>
-//           <Routes>
-//             <Route path="/" element={<Navigate to="/login" />} />
-//             <Route exact path="/login" element={<Login parentCallback = {this.login} />}  />
-//           </Routes>
-//         </Router>
-//       )
-// }
-// else{
+    if (status === "failed" || status===null){
+      return (
+        <Router>
+          <Routes>
+            <Route path="/" element={<Navigate to="/login" />} />
+            <Route exact path="/login" element={<Login parentCallback = {this.login} />}  />
+          </Routes>
+        </Router>
+      )
+}
+else{
   return (
     < >
         <Router>  
@@ -47,7 +47,7 @@ export default class App extends Component {
           <Leftsidebar/>   
           {/* <Home/> */}
           <Routes>
-            <Route path="/" element={<Navigate to="/home" />} />
+            <Route path="/login" element={<Navigate to="/home" />} />
             <Route exact path="/home" element={<Home/>}  />
             <Route exact path="/realtime" element={<Realtime/>}  />
             <Route exact path="/health" element={<Health/>}  />
@@ -60,5 +60,5 @@ export default class App extends Component {
     </>
   );
    }
-  //  }
+   }
 }
