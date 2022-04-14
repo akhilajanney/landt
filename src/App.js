@@ -1,4 +1,4 @@
-import {React,Component} from 'react'
+import React, { Component } from 'react'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/login/Login';
 import Leftsidebar from "./components/leftsidebar/Leftsidebar";
@@ -8,6 +8,7 @@ import Health from './components/pages/Health';
 import Alerts from './components/pages/Alerts';
 import Registration from './components/pages/Registration';
 import Utilize from './components/pages/Utilize';
+// import Example from '../src/components/pages/Example'
 
 
 export default class App extends Component {
@@ -42,10 +43,10 @@ export default class App extends Component {
 else{
   return (
     < >
+    {/* <Example/> */}
         <Router>  
 
           <Leftsidebar/>   
-          {/* <Home/> */}
           <Routes>
             <Route path="/login" element={<Navigate to="/home" />} />
             <Route exact path="/home" element={<Home/>}  />
@@ -54,11 +55,12 @@ else{
             <Route exact path="/alerts" element={<Alerts/>}  />
             <Route exact path="/register" element={<Registration/>}  />
             <Route exact path="/utilization" element={<Utilize/>}  />
+            {/* <Route exact path="/example" element={<Example/>}  /> */}
             
           </Routes>
         </Router>
     </>
   );
-   }
+    }
    }
 }

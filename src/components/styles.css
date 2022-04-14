@@ -22,16 +22,20 @@
     font-family: Poppins-Thin;
     src: url("../fonts/Poppins-Thin.ttf");
   }
+  html,body{
+    height:100%;
+  }
   .maindiv{
     float: right;
     width: 84%;
     overflow-x: auto;
+    /* height: fit-content; */
     height: 100vh;
     margin-top: 0px;
     margin-bottom: 30px;
     margin-right:0px;
     background-color: #EAF1F7;
-    /* overflow-y: hidden; */
+    overflow-y: hidden;
   }
 
   .actions{

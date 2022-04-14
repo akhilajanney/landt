@@ -177,6 +177,26 @@ export default class Leftsidebar extends Component {
                                         </div>
                                     </span>
               </Link>
+              <Link to='/example' style={{ textDecoration: 'none' }}>
+                                    <span>
+                                        <div 
+                                         
+                                            className='sideLink' style={{marginTop:'40px'}}
+                                            id="option7"
+                                           >
+                                              
+                                            <i className="fad fa-sign-out-alt"
+                                                style={{
+                                                    fontSize: '20px',
+                                                    marginRight: '10px',
+                                                    marginTop: "2px",
+                                                    color:'#00629B'
+                                                }}>
+                                            </i>
+                                            <span style={{ fontSize: "17px",color:'#00629B' }}>Admin</span>
+                                        </div>
+                                    </span>
+              </Link>
         </div>
       </>
     )

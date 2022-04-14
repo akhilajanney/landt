@@ -34,7 +34,8 @@ export default class Assetreg extends Component {
             }).catch((error) => { 
                 console.log(error);
                 if (error.response.status === 403) {
-                    this.setState({error: true, message: 'Please Login Again'})
+                    $("#config_displayModal").css("display", "block");
+                     $("#content").text("User Session has timed out. Please Login again");
                 } else if (error.response.status === 400) {
                     this.setState({error: true, message: 'Bad Request!'})
                 }
@@ -63,7 +64,7 @@ export default class Assetreg extends Component {
                     }
                 }).catch((error) => { // console.log(error);
                     if (error.response.status === 403) {
-                        $("#asset_displayModal").css("display", "block");
+                        $("#config_displayModal").css("display", "block");
                         $("#content").text("User Session has timed out. Please Login again");
                       }
     

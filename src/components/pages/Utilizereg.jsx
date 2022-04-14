@@ -201,7 +201,7 @@ export default class Utilizereg extends Component {
                             }
                     }>
                         <div className="inputdiv">
-                            <span className="label">Sensor ID :</span>
+                            <span className="label">Tag ID :</span>
                             <input type="text" name="id" id="id" required="required" />
                         </div>
                         <div className='delete'>

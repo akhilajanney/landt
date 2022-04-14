@@ -11,8 +11,11 @@ export default class Home extends Component {
         let emp = this.empact;
         this.state = {
             series1: [],
+            options1: {},
             series2: [],
-            series3: []
+            options2: {},
+            series3: [],
+            options3: {}
         }
     }
 
@@ -20,27 +23,158 @@ export default class Home extends Component {
 
         axios({method: 'GET', url: '/api/asset/count'}).then((response) => {
             // console.log(response)
-             this.empact = response.data.emp.active;
-             console.log(this.empact);
-           this.emptot = response.data.emp.total;
-            this.assetact = response.data.asset.active;
-            this.assettot = response.data.asset.total;
-            this.utiact = response.data.utilization.active;
-            this.utitot = response.data.utilization.total;
-            
-           this.setState({
-               series1:[
-                   this.empact,
-                  this.emptot- this.empact
-               ], series2:[
-                this.assetact,
-               this.assettot- this.assetact
-            ], series3:[
-                this.utiact,
-               this.utitot- this.utiact
-            ]
-           })
-        // console.log('output',series1);
+            const empact = response.data.emp.active;
+            const emptot = response.data.emp.total;
+            const assetact = response.data.asset.active;
+            const assettot = response.data.asset.total;
+            const utiact = response.data.utilization.active;
+            const utitot = response.data.utilization.total;
+            if(empact!=' ' || assetact!='' || utiact!=' '){
+            this.setState({
+                series1: [
+                    empact,
+                    emptot - empact
+                ],
+                series2: [
+                    assetact,
+                    assettot - assetact
+                ],
+                series3: [
+                    utiact,
+                    utitot - utiact
+                ]
+            });
+            this.setState({
+                options1: {
+                    labels: [
+                        'Active', 'Inactive'
+                    ],
+                    legend: {
+                        position: 'bottom'
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    colors: [
+                        '#5FE1E0', '#bff3f3'
+                    ],
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                labels: {
+                                  show:true,
+                                  name: {
+                                    show: false,
+                                    offsetY: -16,
+                                  },
+                                    total: {
+                                        show: true,
+                                        label: '',
+                                        formatter: () => empact + '/' + emptot,
+                                    },
+                                    chart: {
+                                        animations: {
+                                            enabled: true,
+                                            easing: 'easein',
+                                            speed: 300,
+                                            animateGradually: {
+                                                enabled: true,
+                                                delay: 550
+                                            },
+                                            dynamicAnimation: {
+                                                enabled: true,
+                                                speed: 50
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+
+                options2: {
+                    labels: [
+                        'Active', 'Inactive'
+                    ],
+                    legend: {
+                        position: 'bottom'
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    sparkline: {
+                        enabled: true
+                    },
+
+                    colors: [
+                        '#ff4d4d', '#ffb3b3'
+                    ],
+
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                labels: {
+                                  show:true,
+                                  name: {
+                                    show: false,
+                                    // color:'#00629b',
+                                    offsetY: -16,
+                                  },
+                                    total: {
+                                        show: true,
+                                        label: '',
+                                        formatter: () => assetact + '/' + assettot,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+
+                options3: {
+                    labels: [
+                        'Active', 'Inactive'
+                    ],
+                    legend: {
+                        position: 'bottom'
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    sparkline: {
+                        enabled: true
+                    },
+
+                    colors: [
+                        '#66ffff', '#b3ffff'
+                    ],
+
+                    plotOptions: {
+                        pie: {
+                            donut: {
+                                labels: {
+                                  show:true,
+                                  name: {
+                                    show: false,
+                                    color:'#00629b',
+                                    offsetY: -16,
+                                  },
+                                    total: {
+                                        show: true,
+                                        label: '',
+                                        formatter: () => utiact + '/' + utitot,
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                
+            })
+        }
+ 
+
         }).catch((error) => {
           if (error.response.status === 403) {
             $("#config_displayModal").css("display", "block");
@@ -53,14 +187,17 @@ export default class Home extends Component {
         $("#config_displayModal").css("display", "none");
         sessionStorage.removeItem('login')
         window.location.pathname = '/login'
-      
     };
-    render( ) {
+    render() {
         const {
             series1,
+            options1,
             series2,
+            options2,
             series3,
+            options3
         } = this.state;
+        // console.log("REnder====", series1);
         return (
             <>
                 <div className='maindiv'>
@@ -98,45 +235,10 @@ export default class Home extends Component {
                                         fontFamily: 'Poppins-Regular'
                                     }
                                 }>Employee Tag</p>
-                                {series1.length>0 ?
                                 <Chart series={series1}
-                                    options={{
-                                        labels: [
-                                            'Active', 'Inactive'
-                                        ],
-                                        legend: {
-                                            position: 'bottom'
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        colors: [
-                                            '#5FE1E0', '#bff3f3'
-                                        ],
-                                        plotOptions: {
-                                            pie: {
-                                                donut: {
-                                                    labels: {
-                                                      show:true,
-                                                      name: {
-                                                        show: false,
-                                                        offsetY: -16,
-                                                      },
-                                                        total: {
-                                                            show: true,
-                                                            label: '',
-                                                            formatter: () => this.empact + '/' + this.emptot,
-                                                        },
-
-                                                    }
-                                                }
-                                            }
-                                        },
-                                    }}
+                                    options={options1}
                                     type="donut"
                                     width="250"/>
-                                    :<p></p>
-                                }
                             </div>
 
                             <div style={
@@ -155,46 +257,10 @@ export default class Home extends Component {
                                         fontFamily: 'Poppins-Regular'
                                     }
                                 }>Asset Tag</p>
-                                
-                                {series2.length>0 ?
                                 <Chart series={series2}
-                                    options={{
-                                        labels: [
-                                            'Active', 'Inactive'
-                                        ],
-                                        legend: {
-                                            position: 'bottom'
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        colors: [
-                                            '#ff4d4d', '#ffb3b3'
-                                        ],
-                                        plotOptions: {
-                                            pie: {
-                                                donut: {
-                                                    labels: {
-                                                      show:true,
-                                                      name: {
-                                                        show: false,
-                                                        offsetY: -16,
-                                                      },
-                                                        total: {
-                                                            show: true,
-                                                            label: '',
-                                                            formatter: () => this.assetact + '/' + this.assettot,
-                                                        },
-
-                                                    }
-                                                }
-                                            }
-                                        },
-                                    }}
+                                    options={options2}
                                     type="donut"
                                     width="250"/>
-                                    :<p></p>
-                                }
                             </div>
                             <div style={
                                 {
@@ -212,45 +278,10 @@ export default class Home extends Component {
                                         fontFamily: 'Poppins-Regular'
                                     }
                                 }>Utilization</p>
-                                {series3.length>0 ?
                                 <Chart series={series3}
-                                    options={{
-                                        labels: [
-                                            'Active', 'Inactive'
-                                        ],
-                                        legend: {
-                                            position: 'bottom'
-                                        },
-                                        dataLabels: {
-                                            enabled: false
-                                        },
-                                        colors: [
-                                            '#6666ff', '#b3b3ff'
-                                        ],
-                                        plotOptions: {
-                                            pie: {
-                                                donut: {
-                                                    labels: {
-                                                      show:true,
-                                                      name: {
-                                                        show: false,
-                                                        offsetY: -16,
-                                                      },
-                                                        total: {
-                                                            show: true,
-                                                            label: '',
-                                                            formatter: () => this.utiact + '/' + this.utitot,
-                                                        },
-
-                                                    }
-                                                }
-                                            }
-                                        },
-                                    }}
+                                    options={options3}
                                     type="donut"
                                     width="250"/>
-                                    :<p></p>
-                                }
                             </div>
                         </div>
 

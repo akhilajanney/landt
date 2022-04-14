@@ -122,7 +122,7 @@ export default class Employeereg extends Component {
 
                         <div className="inputdiv">
                             <span className="label">Tag ID :</span>
-                            <input type="text" name="tagid" id="tagid" required="required" placeholder='5a-c2-15-03-00-00'/>
+                            <input type="text" name="tagid" id="tagid" required="required" placeholder='5a-c2-15-02-00-00'/>
                         </div>
 
                         <div className="inputdiv">
@@ -205,7 +205,7 @@ export default class Employeereg extends Component {
                             }
                     }>
                         <div className="inputdiv">
-                            <span className="label">Mac ID :</span>
+                            <span className="label">Tag ID :</span>
                             <input type="text" name="id" id="id" required="required" />
                         </div>
                         <div className='delete'>

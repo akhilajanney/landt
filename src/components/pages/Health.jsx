@@ -15,6 +15,10 @@ export default class Health extends Component {
   componentDidMount(){
     sidelinkClicked('option4')
     this.systemHealth();
+    this.interval = setInterval(this.systemHealth, 15 * 1000);
+  }
+  componentWillUnmount(){
+    clearInterval(this.interval);
   }
 
   systemHealth = () => {
@@ -23,8 +27,8 @@ export default class Health extends Component {
     if($('#healthtype').val()==='employee'){
     axios({method:'GET',url:'/api/employee/registration?key=all'})
     .then((response)=>{
-      console.log(response);
       $('#health').empty(); let data=response.data;
+      console.log("response==>", response);
       for(let i=0;i<data.length;i++){
        
         let timestamp=data[i].lastseen .substr(0, 10) +
@@ -105,6 +109,7 @@ export default class Health extends Component {
     .then((response)=>{
       $('#health').empty();
       let data=response.data;
+      if(data.length>0){
       for(let i=0;i<data.length;i++){
      
         let timestamp=data[i].lastseen .substr(0, 10) +
@@ -128,6 +133,9 @@ export default class Health extends Component {
           
         );sno+=1;
       }
+    }else{
+      this.setState({error: true, message: 'No data Found!'})  
+    }
     })
     .catch((error)=>{
       if (error.response.status === 403) {
@@ -156,7 +164,7 @@ sessionTimeout = () => {
     return (
         <>
       
-      <div className='maindiv'>
+      <div className='maindiv' style={{overflowY:'scroll'}}>
             <div  style={{marginLeft:'35px'}}>
                 <h1 style={{color:'#0000008f'}}>System Health</h1>
                 <div style={{width:'73px',height:'5px',background:'#00629B',

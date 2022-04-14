@@ -15,18 +15,19 @@ export default class Alerts extends Component {
   componentDidMount(){
     sidelinkClicked('option3')
     this.dropdownChange();
+    this.interval = setInterval(this.dropdownChange, 15 * 1000);
+  }
+  componentWillUnmount(){
+    clearInterval(this.interval);
   }
   dropdownChange=()=>{
-    // let alertvalue=$('#alerttype').val();
-    let alerttype=$('#alerttype').val();
+    $('#alerts').empty();
     let data={
       value: $('#alert').val(),
       type: $('#alerttype').val(),
     }
-
     console.log(data.value);
-  
-  
+    
     axios({method:'POST',url:'/api/alerts',data: data})
     .then((response)=>{
       let sno=0;
@@ -36,18 +37,14 @@ export default class Alerts extends Component {
       $('#alerts').empty();
       for(let i=0;i<data.length;i++){
         let values= data[i].value;  
-        // console.log(value)
         let lastseen=data[i].timestamp .substr(0, 10) +
         " " +
         data[i].timestamp.substr(11, 8);
-        // status='red';
-        //   if (new Date() - new Date(data[i].lastseen) <= 2 * 60 * 1000) {
-        //     status = "green";
-        //   }
-
+       
       if(values=== 3){  
         console.log('freefallalert-----');
-  
+        $('#alerts').empty();
+        if(data.length>0){
         $('#alerts').append(
           "<tr><td>" +
               (sno + 1) +
@@ -61,9 +58,13 @@ export default class Alerts extends Component {
         
       );
       sno+=1;
-      } 
+        } else{
+          $('#alerttable').hide();
+          this.setState({error: true, message: 'No data Found for Free Fall!'})
+        }
+      }
       else if((values===4)){
-  
+        if(data.length>0){
         console.log('noactivityalert-----');
         $('#alerts').append(
           "<tr><td>" +
@@ -77,9 +78,15 @@ export default class Alerts extends Component {
               "</td></tr>" 
         
       );sno+=1;
+        }
+        else{
+          $('#alerts').empty();
+          $('#alerttable').hide();
+          this.setState({error: true, message: 'No data Found for Free Fall!'})
+        }
       }
       else if(values=== 5){
-       
+        if(data.length>0){
         console.log('lowbatteryyalert-----'); 
         $('#alerts').append(
           "<tr><td>" +
@@ -93,9 +100,14 @@ export default class Alerts extends Component {
               "</td></tr>" 
         
       );sno+=1;
+    }else{
+      $('#alerts').empty();
+      $('#alerttable').hide();
+      this.setState({error: true, message: 'No data Found for Free Fall!'})
+    }
       }
       else if(values===1){
-      
+        if(data.length>0){
         console.log('panicyalert-----');  
         $('#alerts').append(
           "<tr><td>" +
@@ -110,6 +122,12 @@ export default class Alerts extends Component {
         
       );sno+=1;
         }      
+      }
+      else{
+        $('#alerts').empty();
+        $('#alerttable').hide();
+        this.setState({error: true, message: 'No data Found for Free Fall!'})
+      }
       }
     })
     .catch((error)=>{
@@ -135,7 +153,7 @@ export default class Alerts extends Component {
     const{message,error,success}=this.state;
     return (
         <>
-      <div className='maindiv'>
+      <div className='maindiv' style={{overflowY:'scroll'}}>
             <div  style={{marginLeft:'35px'}}>
                 <h1 style={{color:'#0000008f'}}>Alerts</h1>
                 <div style={{width:'50px',height:'5px',background:'#00629B',
@@ -172,7 +190,7 @@ export default class Alerts extends Component {
 
                             </select>
                         </div>
-                <table style={{ marginTop: "30px" }}>
+                <table id='alerttable'style={{ marginTop: "30px" }}>
                 <thead>
                   <tr>
                     <th>Sl.No</th>
